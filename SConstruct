@@ -10,12 +10,25 @@ import sys
 sys.path.append('tools/build')
 
 import rules
-conf = Configure(DefaultEnvironment(ENV = os.environ, TARGET_ARCH='x86'))
-#conf = Configure(DefaultEnvironment(ENV = os.environ, TARGET_ARCH='amd64_x86'))
-#conf = Configure(DefaultEnvironment(ENV = os.environ,MSVC_USE_SCRIPT = "c:\\Program Files (x86)\\Microsoft Visual Studio 14.0\\VC\\bin\\amd64_x86\\vcvarsamd64_x86.bat"))
-#conf = Configure(DefaultEnvironment(ENV = os.environ,MSVC_USE_SCRIPT = "vcvarsamd64_x86.bat"))
+conf = Configure(DefaultEnvironment(ENV = os.environ))
 env = rules.SetupBuildEnvironment(conf)
 
-SConscript(dirs=['controller',  'vrouter', 'tools/sandesh'])
+SConscript(dirs=['controller', 'vrouter', 'tools/sandesh'])
 
+SConscript('openstack/nova_contrail_vif/SConscript',
+           variant_dir='build/noarch/nova_contrail_vif')
 
+if os.path.exists("openstack/contrail-nova-extensions/contrail_network_api/SConscript"):
+    SConscript('openstack/contrail-nova-extensions/contrail_network_api/SConscript',
+               variant_dir='build/noarch/contrail_nova_networkapi')
+
+SConscript('openstack/neutron_plugin/SConscript',
+           variant_dir='build/noarch/neutron_plugin')
+
+if os.path.exists("openstack/ceilometer_plugin/SConscript"):
+    SConscript('openstack/ceilometer_plugin/SConscript',
+               variant_dir='build/noarch/ceilometer_plugin')
+
+if os.path.exists("contrail-f5/SConscript"):
+    SConscript('contrail-f5/SConscript',
+               variant_dir='build/noarch/contrail-f5')
